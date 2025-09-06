@@ -1,3 +1,6 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 const ClassifyAIAgent = require('../lib/ai-agent');
 
 class AgentTester {
