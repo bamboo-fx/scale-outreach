@@ -13,6 +13,7 @@ const Chatbot = () => {
   ])
   const [inputValue, setInputValue] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [progressMessage, setProgressMessage] = useState('')
   const [sessionId] = useState(`session-${Date.now()}`)
   const messagesEndRef = useRef(null)
 
@@ -23,6 +24,55 @@ const Chatbot = () => {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  const progressMessages = [
+    "Scanning HyperSchedule database...",
+    "Scraping course catalog endpoints...",
+    "Accessing RateMyProfessor API...",
+    "Analyzing course requirements matrix...",
+    "Checking schedule conflicts algorithm...",
+    "Gathering professor ratings dataset...",
+    "Processing academic data pipeline...",
+    "Evaluating course difficulty metrics...",
+    "Searching prerequisites graph...",
+    "Reviewing graduation requirements tree...",
+    "Initializing neural network models...",
+    "Executing semantic search queries...",
+    "Parsing JSON course metadata...",
+    "Running NLP sentiment analysis...",
+    "Optimizing recommendation engine...",
+    "Calculating GPA impact vectors...",
+    "Indexing professor review corpus...",
+    "Validating schedule feasibility...",
+    "Cross-referencing degree audits...",
+    "Aggregating enrollment statistics...",
+    "Compiling prerequisite dependencies...",
+    "Normalizing grade distribution data...",
+    "Executing machine learning inference...",
+    "Processing natural language queries...",
+    "Analyzing academic pathway graphs...",
+    "Computing course similarity scores...",
+    "Extracting key academic insights...",
+    "Synthesizing comprehensive response..."
+  ]
+
+  const showProgressMessages = async () => {
+    // Show dots for initial 2 seconds
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    
+    const shuffled = [...progressMessages].sort(() => 0.5 - Math.random())
+    const selectedMessages = shuffled.slice(0, 8)
+    
+    for (let i = 0; i < selectedMessages.length; i++) {
+      setProgressMessage(selectedMessages[i])
+      // Vary timing: shorter for technical messages, longer for complex ones
+      const baseDelay = selectedMessages[i].includes('neural network') || 
+                       selectedMessages[i].includes('machine learning') ||
+                       selectedMessages[i].includes('semantic search') ? 2000 : 1200
+      await new Promise(resolve => setTimeout(resolve, baseDelay + Math.random() * 800))
+    }
+    setProgressMessage('')
+  }
 
   const sendMessage = async (e) => {
     e.preventDefault()
@@ -38,6 +88,8 @@ const Chatbot = () => {
     setMessages(prev => [...prev, userMessage])
     setInputValue('')
     setIsLoading(true)
+
+    showProgressMessages()
 
     try {
       const response = await fetch('http://localhost:3000/chat', {
@@ -77,6 +129,7 @@ const Chatbot = () => {
       setMessages(prev => [...prev, errorMessage])
     } finally {
       setIsLoading(false)
+      setProgressMessage('')
     }
   }
 
@@ -120,11 +173,17 @@ const Chatbot = () => {
         {isLoading && (
           <div className="loading-message">
             <div className="message-bubble bot-message">
-              <div className="typing-indicator">
-                <div className="typing-dot"></div>
-                <div className="typing-dot"></div>
-                <div className="typing-dot"></div>
-              </div>
+              {progressMessage ? (
+                <div className="progress-text">
+                  {progressMessage}
+                </div>
+              ) : (
+                <div className="typing-indicator">
+                  <div className="typing-dot"></div>
+                  <div className="typing-dot"></div>
+                  <div className="typing-dot"></div>
+                </div>
+              )}
             </div>
           </div>
         )}

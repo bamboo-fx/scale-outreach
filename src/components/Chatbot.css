@@ -131,6 +131,23 @@
   }
 }
 
+.progress-text {
+  padding: 1rem;
+  color: #16a085;
+  font-size: 0.95rem;
+  font-weight: 500;
+  animation: fadeInOut 1.5s ease-in-out infinite;
+}
+
+@keyframes fadeInOut {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 .input-form {
   padding: 1rem 1.5rem;
   background: white;
