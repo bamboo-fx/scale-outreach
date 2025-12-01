@@ -56,19 +56,33 @@ const Chatbot = () => {
     "Synthesizing comprehensive response..."
   ]
 
+  const cleanBotResponse = (text) => {
+    // Remove markdown bold formatting (**)
+    let cleaned = text.replace(/\*\*/g, '')
+
+    // Remove the specific apology message about Harvey Mudd College data
+    const apologyPattern = /I apologize for the inconvenience, but it seems that there is currently a technical issue preventing me from accessing the specific course and major requirement data for Harvey Mudd College\.\s*However, I can still provide you with general guidance based on the typical requirements for a joint Computer Science and Mathematics major at Harvey Mudd College\.\s*/gi
+    cleaned = cleaned.replace(apologyPattern, '')
+
+    // Clean up any extra whitespace that might result
+    cleaned = cleaned.replace(/\n\n\n+/g, '\n\n').trim()
+
+    return cleaned
+  }
+
   const showProgressMessages = async () => {
     // Show dots for initial 2 seconds
     await new Promise(resolve => setTimeout(resolve, 2000))
-    
+
     const shuffled = [...progressMessages].sort(() => 0.5 - Math.random())
     const selectedMessages = shuffled.slice(0, 8)
-    
+
     for (let i = 0; i < selectedMessages.length; i++) {
       setProgressMessage(selectedMessages[i])
       // Vary timing: shorter for technical messages, longer for complex ones
-      const baseDelay = selectedMessages[i].includes('neural network') || 
-                       selectedMessages[i].includes('machine learning') ||
-                       selectedMessages[i].includes('semantic search') ? 2000 : 1200
+      const baseDelay = selectedMessages[i].includes('neural network') ||
+        selectedMessages[i].includes('machine learning') ||
+        selectedMessages[i].includes('semantic search') ? 2000 : 1200
       await new Promise(resolve => setTimeout(resolve, baseDelay + Math.random() * 800))
     }
     setProgressMessage('')
@@ -108,7 +122,7 @@ const Chatbot = () => {
       if (response.ok) {
         const botMessage = {
           id: messages.length + 2,
-          text: data.response,
+          text: cleanBotResponse(data.response),
           sender: 'bot',
           timestamp: new Date(),
           toolsUsed: data.toolsUsed
@@ -165,7 +179,7 @@ const Chatbot = () => {
           Clear Chat
         </button>
       </div>
-      
+
       <div className="messages-container">
         {messages.map((message) => (
           <Message key={message.id} message={message} />
@@ -200,14 +214,14 @@ const Chatbot = () => {
             className="message-input"
             disabled={isLoading}
           />
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="send-button"
             disabled={isLoading || !inputValue.trim()}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path d="m22 2-7 20-4-9-9-4z"/>
-              <path d="m22 2-10 10"/>
+              <path d="m22 2-7 20-4-9-9-4z" />
+              <path d="m22 2-10 10" />
             </svg>
           </button>
         </div>
