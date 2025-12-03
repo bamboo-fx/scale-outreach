@@ -106,36 +106,23 @@ const Chatbot = () => {
     showProgressMessages()
 
     try {
-      const response = await fetch('http://localhost:3000/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: inputValue,
-          sessionId: sessionId
-        })
-      })
+      // Simulate 15 second wait for agent and hyperschedule search
+      await new Promise(resolve => setTimeout(resolve, 15000))
 
-      const data = await response.json()
-
-      if (response.ok) {
-        const botMessage = {
-          id: messages.length + 2,
-          text: cleanBotResponse(data.response),
-          sender: 'bot',
-          timestamp: new Date(),
-          toolsUsed: data.toolsUsed
-        }
-        setMessages(prev => [...prev, botMessage])
-      } else {
-        throw new Error(data.error || 'Failed to get response')
+      // Hardcoded response for demo purposes
+      const botMessage = {
+        id: messages.length + 2,
+        text: "Since you are a sophomore at Mudd and have already taken cs70 and math55, next semester you should take cs81 computability and logic. I checked hyperschedule and there is only one class teaching it. Would you like me to check the ratemyprofessor?",
+        sender: 'bot',
+        timestamp: new Date(),
+        toolsUsed: ['agent-simulation', 'hyperschedule-simulation']
       }
+      setMessages(prev => [...prev, botMessage])
     } catch (error) {
       console.error('Error sending message:', error)
       const errorMessage = {
         id: messages.length + 2,
-        text: "I'm sorry, I'm having trouble connecting right now. Please make sure the backend server is running on port 3000 and try again.",
+        text: "I'm sorry, I encountered an error. Please try again.",
         sender: 'bot',
         timestamp: new Date(),
         isError: true
